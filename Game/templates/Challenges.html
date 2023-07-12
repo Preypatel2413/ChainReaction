@@ -1,0 +1,227 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chain Reaction | Multiplayer Lobby</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <title>Chain Reaction</title>
+    <style>
+        body{
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        h1{
+            font-family: 'Papyrus', sans-serif;
+            font-weight: bold;
+            font-size: 42px;
+            height: 70px;
+            width: 500px;
+            color: transparent;
+            background-clip: text;
+            -webkit-background-clip: text;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .button{
+            padding: 12px 12px;
+        }
+
+        .section h2 {
+            font-family: 'Trebuchet MS', sans-serif;
+        }
+
+        .challenge-button {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition-duration: 0.4s;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            margin-right: 10px;
+        }
+
+        .challenge-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="pc">
+    <h1>Chain Reaction</h1>
+    </div>
+    <br><br><br><br>
+    <div class = "pc">
+    <div class="section">
+        <!-- {% if pairing %} -->
+            <!-- <button class="button button2" id="end_wait" onclick="endWait()">Stop Search</button> -->
+        <!-- {% else %} -->
+            <button class="button button1" id="random_challenge" onclick="randomChallenge()">Challenge Random Player</button>
+        <!-- {% endif %} -->
+    </div></div>
+
+    <div class="pc">
+    <table>
+    <td style="vertical-align: top; padding-left: 50px; padding-right: 50px;" >
+    <div class="section">
+        <table>
+        <th><h2>Challenge Friend</h2></th>
+        {% for friend in friends %}
+        <tr>
+        <td>{{ friend.friend_name }}</td>
+        <td style="display: flex; justify-content: flex-end;">
+            <button class="challenge-button" id="challenge_button_{{forloop.counter0}}" onclick="createChallenge(`{{forloop.counter0}}`,`{{ friend.friend_name }}`)">Challenge</button>
+        </td>
+        </tr>
+        {% endfor %}
+        </table>
+    </div>
+    </td>
+
+    <td style="vertical-align: top; padding-left: 50px; padding-right: 50px;">
+    <div class="section">
+        <table>
+        <th><h2>Received Challenges</h2></th>
+        {% for player in received_challenges %}
+            <tr>
+            <td>{{ player.p1 }}</td>
+            <td style="display: flex; justify-content: flex-end;">
+                <button class="challenge-button" id="accept_button_{{forloop.counter0}}" onclick="acceptChallenge(`{{forloop.counter0}}`,`{{player.p1}}`)">Accept</button></tr>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    </td>
+
+    
+    </table>
+    </div>
+
+    <script>
+        
+        function createChallenge(index,name){
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var pairing_z = JSON.parse(this.responseText).pairing_z;
+
+                    if (pairing_z) {
+                        // Change button to "End Wait" button
+                        var randomChallengeButton = document.getElementById("challenge_button_" + index);
+                        randomChallengeButton.innerHTML = "End Wait";
+                        randomChallengeButton.onclick = endWait(index, name);
+                    } else {
+                        // Keep the "Challenge Random Player" button
+                        document.getElementById("challenge_button_" + index).style.display = "none";
+                    }
+                }
+            };
+            xmlhttp.open("GET", "/createChallenge/" + name + "/", true);
+            xmlhttp.send();
+        }
+
+        function acceptChallenge(index, name){
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("accept_button_" + index).innerHTML = this.responseText;
+
+                    // location.reload();
+                }
+            };
+            xmlhttp.open("GET", "/acceptChallenge/" + name + "/", true);
+            xmlhttp.send();
+        }
+
+    </script>
+    <script>
+        function randomChallenge(){
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    
+                    var pairing = JSON.parse(this.responseText).pairing;
+
+                    if (pairing) {
+                        // Change button to "End Wait" button
+                        var randomChallengeButton = document.getElementById("random_challenge");
+                        randomChallengeButton.innerHTML = "End Wait";
+                        randomChallengeButton.onclick = endWait(-1);
+                    } else {
+                        // Keep the "Challenge Random Player" button
+                        document.getElementById("random_challenge").style.display = "none";
+                    }
+                }
+            };
+            xmlhttp.open("GET", "/randomChallenge/", true);
+            xmlhttp.send();
+        }
+
+        function endWait(oppo_ind, name = "user") {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                // document.getElementById("random_challenge").innerHTML = this.responseText;
+
+                // document.getElementById("random_challenge").style.display = "inline-block";
+                // document.getElementById("end_wait").style.display = "none";
+
+                // location.reload();
+                if(oppo_ind === -1){
+                    var randomChallengeButton = document.getElementById("random_challenge");
+                    randomChallengeButton.innerHTML = "Challenge Random Player";
+                    randomChallengeButton.onclick = randomChallenge;
+
+                    randomChallengeButton.style.display = "inline-block";
+                    document.getElementById("end_wait").style.display = "none";
+                }
+                else{
+                    var friendlyChallengeButton = document.getElementById("challenge_button" + oppo_ind);
+                    friendlyChallengeButton.innerHTML = "Challenge";
+                    friendlyChallengeButton.onclick = createChallenge(oppo_ind,name);
+
+                    friendlyChallengeButton.style.display = "inline-block";
+                    document.getElementById("end_wait" + oppo_ind).style.display = "none";   
+                }
+
+            }
+        };
+        xmlhttp.open("GET", "/endWait/" + name + "/", true);
+        xmlhttp.send();
+    }
+    </script>
+
+    <!-- challenges.html -->
+
+    <script>
+        var socket = new WebSocket('ws://' + window.location.host + '/ws/random_challenge/');
+    
+        socket.onmessage = function (e) {
+            var data = JSON.parse(e.data)
+            var message = data.message;
+            var player1_name = data.player1_name;
+            var player2_name = data.player2_name;
+            var room_code = data.room_code;
+            console.log(data)
+            console.log(player1_name, room_code)
+            if (message === 'You have been paired with another player.' && (player1_name === '{{request.user.username}}' || player2_name === '{{request.user.username}}')) {
+                console.log("redirecting player 1")
+                console.log(room_code)
+                window.location.href = '/Game/' + room_code + '/';
+            }
+        };
+    
+        socket.onopen = function (e) {
+            socket.send('Waiting for random challenge...');
+        };
+    </script>  
+</body>
+</html>

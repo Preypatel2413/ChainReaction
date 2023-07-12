@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Profile</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <style>
+        /* CSS styles for the profile page */
+        body{
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        .profile-block {
+            width: 50%;
+            margin: auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .profile-block h2 {
+            text-align: left;
+        }
+
+        table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        table th, table td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        .friend-list {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .friend-list th, .friend-list td {
+            padding: 8px;
+            text-align: center;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
+        h1{
+            font-family: 'Papyrus', sans-serif;
+            font-weight: bold;
+            font-size: 48px;
+            height: 100px;
+            width: 500px;
+            color: transparent;
+            background-clip: text;
+            -webkit-background-clip: text;
+        }
+
+        h2{
+            font-family: 'Comic Sans MS', sans-serif;
+            font-weight: bold;
+            font-size: 32px;
+            padding-left: 50px;
+        }
+
+        h3{
+            font-family: 'Trebuchet MS', sans-serif;
+            font-weight: bold;
+            size: 24px;
+        }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+</head>
+<body>
+    <a href="/Home" style="text-decoration: none;">
+    <h1 style="display: flex; justify-content: center; align-items: center;">Chain Reaction</h1>
+    </a>
+
+    <div class="profile-block">
+        <h2>{{ user.username }}</h2>
+
+        <table>
+            <tr>
+                <th><h3>Games Won</h3></th>
+                <th><h3>Games Played</h3></th>
+                <th><h3>Percentage</h3></th>
+            </tr>
+            <tr>
+                <td>{{ user.games_won }}</td>
+                <td>{{ user.games_played }}</td>
+                <td>{{ wp }}%</td>
+            </tr>
+        </table>
+
+        <table class="friend-list">
+            <tr>
+                <th><h3>Friend's Name</h3></th>
+                <th><h3>Games Won</h3></th>
+                <th><h3>Games Lost</h3></th>
+                <th><h3>Games Played</h3></th>
+            </tr>
+            {% for friend in friend_list %}
+            <tr>
+                <td>{{ friend.name }}</td>
+                <td>{{ friend.games_won }}</td>
+                <td>{{ friend.games_won_by_friend }}</td>
+                <td>{{ friend.games_played }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <br><br>
+        <div style="padding-left: 50px;">
+        <input type="text" id="friendName" placeholder="Enter friend's name" style="width: 450px; height: 38px; font-family: Trebuchet MS,Geneva, Tahoma, sans-serif; font-size: 20px;padding-left: 10px;">
+        <button class="button" onclick="addFriend()"> + Add Friend</button>    
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+    
+    <script>
+        function addFriend() {
+            var friendName = document.getElementById("friendName").value;
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (this.readyState === 4) {
+                    if (this.status === 200) {
+                        try {
+                        var data = JSON.parse(this.responseText.trim());
+                        } catch (error) {
+                        console.error('Error parsing JSON:', error);
+                        }
+                        console.log(data);
+                        console.log(typeof data);
+
+                        var success = data.success;
+                        var message = data.message;
+                        console.log(message, success);
+                        
+                        if (success) {
+                            Swal.fire({icon: 'success', title: 'Friend Added', confirmButtonText: 'OK',text: message, showCancelButton: false,})
+                                .then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload()
+                                    } 
+                                });
+                        } else {
+                            Swal.fire({icon: 'error', title: 'Sorry', confirmButtonText: 'OK',text: message, showCancelButton: false,})
+                                .then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload()
+                                    } 
+                                });
+                        }
+                        
+                    } else {
+                        console.error("Request failed with status:", this.status);
+                    }
+                }
+            };
+
+            xhr.open("GET", "/addfriend/" + friendName, true);
+            xhr.send();
+            
+        }
+    </script>
+    
+</body>
+</html>

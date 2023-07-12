@@ -1,0 +1,243 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <style>
+        .button {
+            padding: 0;
+            margin: 0;
+        }
+
+        .button img {
+            padding: 0;
+            margin: 0;
+            width: 50px;
+            height: 50px;
+            
+        }
+
+        .button_ {
+            padding: 10px 10px;
+            margin: 3px 3px;
+        }
+    </style>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+<body>
+    <div class="pc">
+    <h1>Chain Reaction</h1>
+    </div>
+    <br>
+    <div>
+    {% if move|divisibleby:2 %}
+    <table class="tab2" align="center">
+    {% else %}
+    <table class="tab1" align="center">
+    {% endif %}    
+        {% for row in Position %}    
+        <tr>
+            {% for col in row %}
+            {% if move|divisibleby:2 %}
+            <td class="tab2">
+            {% else %}
+            <td class="tab1">
+            {% endif %}
+                {% if move|divisibleby:2 %}    
+                <button class="button button1" type="button" id="button_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" onclick="updatePosition(`{{forloop.parentloop.counter0}}`,`{{forloop.counter0}}`)">
+                    <!-- {{ col }}     -->
+                    {% if col == 3 %}
+                        <img src="{% static 'images/G_3.png' %}">
+                    {% elif col == 2 %}
+                        <img src="{% static 'images/G_2.png' %}">
+                    {% elif col == 1 %}
+                        <img src="{% static 'images/G_1.png' %}">
+                    {% elif col == -3 %}
+                        <img src="{% static 'images/B_3.png' %}">
+                    {% elif col == -2 %}
+                        <img src="{% static 'images/B_2.png' %}">
+                    {% elif col == -1 %}
+                        <img src="{% static 'images/B_1.png' %}">
+                    {% else %}
+                        <img src="{% static 'images/0.png' %}">
+                    {% endif %}
+                </button>
+                {% else %}
+                <button class="button button2" type="button" id="button_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" onclick="updatePosition(`{{forloop.parentloop.counter0}}`,`{{forloop.counter0}}`)">
+                    <!-- {{ col }}     -->
+                    {% if col == 3 %}
+                        <img src="{% static 'images/G_3.png' %}">
+                    {% elif col == 2 %}
+                        <img src="{% static 'images/G_2.png' %}">
+                    {% elif col == 1 %}
+                        <img src="{% static 'images/G_1.png' %}">
+                    {% elif col == -3 %}
+                        <img src="{% static 'images/B_3.png' %}">
+                    {% elif col == -2 %}
+                        <img src="{% static 'images/B_2.png' %}">
+                    {% elif col == -1 %}
+                        <img src="{% static 'images/B_1.png' %}">
+                    {% else %}
+                        <img src="{% static 'images/0.png' %}">
+                    {% endif %}
+                    <!-- <img src="{% static 'images/B_1.png' %}" style="width:25px;height:25px;"> -->
+                </button>
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+
+    <div>
+    {% if win == 1 or win == 2 %}
+    <table align="center">
+        {% if win == 1%} 
+        <tr>
+            <h3>Player 1 has Won!!!</h3>
+        </tr>
+        {% else %}
+        <tr>
+            <h3>Player 2 has Won!!!</h3>
+        </tr>
+        {% endif %}
+        <tr><td align="center">
+            <button type="button" class="button button1 button_" onclick="clearData_M()">Play Again</button>
+        </td>
+        <td align="center" onclick="">
+            <button type="button" class="button button2 button_" onclick="clearData_H()">Go to Home</button>
+        </td></tr>
+    </table>
+    {% endif %}
+    </div>
+
+
+
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+            <div class="col-3">
+                <form>
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1" class="h4 pt-5">Chatbox</label>
+                        <textarea class="form-control" id="chat-text" readonly rows="10"></textarea><br>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" placeholder="Enter text here" id="input" type="text"></br>
+                    </div>
+                    <input class="btn btn-primary btn-lg btn-block" id="submit" type="button" value="Send">
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- {% comment %} Get data for username and chatbox name{% endcomment %}
+    {{ request.user.username|json_script:"user_username" }}
+    {{ room_code|json_script:"room-name" }} -->
+    <script id="user_username" type="application/json">{{ request.user.username|escapejs }}</script>
+    <script id="room-name" type="application/json">{{ room_code|escapejs }}</script>
+
+<script>
+    const user_username = JSON.parse(document.getElementById('user_username').textContent);
+    
+    const boxName = JSON.parse(document.getElementById('input').textContent);
+    console.log(boxName)
+    // Create a WebSocket in JavaScript.
+    const chatSocket = new WebSocket(
+       'ws://' +
+       window.location.host +
+       '/ws/Play/' +
+       room_code +
+       '/'
+    );
+
+    chatSocket.onmessage = function (e) {
+       const data = JSON.parse(e.data);
+       document.querySelector('#chat-text').value += (data.message + ' sent by ' + data.username   + '\n') // add message to text box
+    }
+    
+    document.querySelector('#submit').onclick = function (e) {
+       const messageInputDom = document.querySelector('#input');
+       const message = messageInputDom.value;
+       chatSocket.send(JSON.stringify({
+           'message': message,
+           'username': user_username,
+       }));
+       messageInputDom.value = '';
+    };
+    console.log("run")
+</script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
+    </script>
+
+    <script>
+        function updatePosition(row, col) {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("button_" + col + "_" + row).innerHTML = this.responseText;
+
+                    location.reload();
+                }
+            };
+            xmlhttp.open("GET", "/update_position_/" + row + "/" + col, true);
+            xmlhttp.send();
+        }
+        //--------------------------------------------------------------------------------------------//
+
+        // const roomName = '{{ room_name }}';
+        // const socket = new WebSocket('ws://' + window.location.host + '/ws/game/' + roomName + '/');
+        
+        // socket.onmessage = function(event) {
+        //     const message = JSON.parse(event.data);
+        //     const positionArray = message.position_array;
+            
+        //     // Update the position array display on the page
+        //     // ...
+            
+        //     // Refresh the page to reflect the updated position array
+        //     //location.reload();
+        // };
+        
+        // function updatePosition(positionArray) {
+        //     // Send the position array to the server through WebSocket
+        //     socket.send(JSON.stringify({ 'position_array': positionArray }));
+        // }
+        
+        //----------------------------------------------------------------------------------------------//
+        function name(params) {
+            sessionStorage.key
+        }
+        function clearData_M() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/clear-data/");
+            xhr.send();
+            window.location.href = "/Main/";
+        }
+        function clearData_H() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/clear-data/");
+            xhr.send();
+            window.location.href = "/Home/";
+        }
+
+    </script>
+
+</body>
+</html>

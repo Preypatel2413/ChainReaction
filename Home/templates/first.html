@@ -1,0 +1,234 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chain Reaction | Home </title>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+  <style>
+    h1{
+      color: #000000;
+      text-align: center;
+      vertical-align: middle;
+      font-family: 'Papyrus', Verdana, Geneva, sans-serif;
+      font-weight: bold;
+      font-size: 48px;
+      background-image: linear-gradient(to bottom right, #4CAF50, #008CBA);
+      height: 70px; 
+      width: 500px;
+      display: flex; /* Use flexbox to center the text vertically */
+      justify-content: center; /* Center horizontally */
+      align-items: center;
+      margin: 0;
+      background-clip: text;
+      -webkit-background-clip: text;
+      /* text-shadow: 0 0 3px #008CBA, 0 0 5px #4CAF50; */
+  }
+
+    .button {
+      padding: 28px 48px;
+      font-size: 28px;
+      margin: 8px 4px;
+    }
+    
+    .button1 {
+      background-color: white;
+      color: black;
+      border: 4px solid #4CAF50;
+    }
+    
+    .button2 {
+      background-color: white;
+      color: black;
+      border: 4px solid #008CBA;
+    }
+
+    h1{
+      /* font-family: 'Verdana'; */
+      font-family: 'Papyrus', Verdana, sans-serif;
+      font-weight: bold;
+      font-size: 48px;
+      height: 100px;
+      width: 500px;
+      color: transparent;
+      background-clip: text;
+      -webkit-background-clip: text;
+    }
+
+    body {
+      margin: 0;
+      /* font: normal 75% Arial, Helvetica, sans-serif; */
+    }
+    canvas {
+      display: block;
+      /* vertical-align: bottom; */
+    }
+
+    .pc {
+      display: flex;
+      justify-content: center; /* Center horizontally */
+      align-items: center; /* Center vertically */
+      border: none;
+    }
+    
+    #tsparticles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      background-image: url("");
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: 50% 50%;
+    }
+
+    #particles-js {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+  </style>
+</head>    
+<body>
+  <div>
+    <div class="pc">
+      <h1>Chain Reaction</h1>
+      <a href="/Profile">
+        <img type="image/png" src="https://user-images.githubusercontent.com/76490445/252639953-aab47d71-e29a-4f7e-8998-af6cd161be52.jpg" alt="Profile Icon" style="width: 50px; height: 50px;">
+      </a>
+    </div>
+    <br>
+
+    <div>
+    <table  class="pc">
+        <tr><td class="pc">
+            <button type="button" class="button button1" onclick="window.location.href='/Challenge/'">Multiplayer</button>
+        </td></tr>
+        <tr><td class="pc">
+            <button type="button" class="button button2" onclick="window.location.href='/Main/'">Singleplayer</button>
+        </td></tr>
+    </table>
+    </div>
+    
+  <div id="particles-js"></div>
+  </div>
+
+  <script src="//cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    particlesJS("particles-js", {
+      "particles": {
+    "number": {
+      "value": 120,
+      "density": {
+        "enable": true,
+        "value_area": 800
+      }
+    },
+    "color": {
+      "value": ["#4CAF50","#008CBA"]
+    },
+    "shape": {
+      "type": "circle",
+      "stroke": {
+        "width": 0,
+        "color": "#000000"
+      },
+      "polygon": {
+        "nb_sides": 5
+      },
+      "image": {
+        "src": "img/github.svg",
+        "width": 100,
+        "height": 100
+      }
+    },
+    "opacity": {
+      "value": 0.8,
+      "random": false,
+      "anim": {
+        "enable": false,
+        "speed": 1,
+        "opacity_min": 0.1,
+        "sync": false
+      }
+    },
+    "size": {
+      "value": 8,
+      "random": true,
+      "anim": {
+        "enable": false,
+        "speed": 80,
+        "size_min": 0.1,
+        "sync": false
+      }
+    },
+    "line_linked": {
+      "enable": true,
+      "distance": 100,
+      "color": "#000000",
+      "opacity": 0.6,
+      "width": 1
+    },
+    "move": {
+      "enable": true,
+      "speed": 4,
+      "direction": "none",
+      "random": true,
+      "straight": false,
+      "out_mode": "bounce",
+      "bounce": false,
+      "attract": {
+        "enable": false,
+        "rotateX": 600,
+        "rotateY": 1200
+      }
+    }
+  },
+  "interactivity": {
+    "detect_on": "canvas",
+    "events": {
+      "onhover": {
+        "enable": true,
+        "mode": "repulse"
+      },
+      "onclick": {
+        "enable": false,
+        "mode": "grab"
+      },
+      "resize": true
+    },
+    "modes": {
+      "grab": {
+        "distance": 800,
+        "line_linked": {
+          "opacity": 1
+        }
+      },
+      "bubble": {
+        "distance": 800,
+        "size": 15,
+        "duration": 2,
+        "opacity": 0.8,
+        "speed": 3
+      },
+      "repulse": {
+        "distance": 80,
+        "duration": 0.4
+      },
+      "push": {
+        "particles_nb": 4
+      },
+      "remove": {
+        "particles_nb": 2
+      }
+    }
+  },
+  "retina_detect": true
+    });
+  </script>
+  
+</body>
+</html>

@@ -1,0 +1,152 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <title>Chain Reaction</title>
+    <style>
+        h1 {
+            text-align: center;
+            font-family: 'Verdana';
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .button{
+            padding: 12px 12px;
+        }
+
+        .section h2 {
+            font-family: 'Verdana';
+        }
+
+        .challenge-button {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition-duration: 0.4s;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            margin-right: 10px;
+        }
+
+        .challenge-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="pc">
+    <h1>Chain Reaction</h1>
+    </div>
+
+    <div class="pc">
+    <table>
+    <td>
+    <div class="section">
+        <!-- {% if pairing %} -->
+            <!-- <button class="button button2" id="end_wait" onclick="endWait()">Stop Search</button> -->
+        <!-- {% else %} -->
+            <button class="button button1" id="random_challenge" onclick="randomChallenge()">Challenge Random Player</button>
+        <!-- {% endif %} -->
+    </div>
+
+    <div class="section">
+        <table>
+        <thead><h2>Received Challenges</h2></thead>
+        {% for player in received_challenges %}
+            <tr>
+            <td>{{ player.name }}</td>
+            <td><button class="challenge-button" id="accept_button_{{forloop.counter0}}" onclick="acceptChallenge(`{{forloop.counter0}}`)">Accept</button></tr>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    </td>
+
+    <td>
+    <div class="section">
+        <table>
+        <th><h2>Challenge Friend</h2></th>
+        {% for friend in friends %}
+        <tr>
+        <td>{{ friend.friend_name }}</td>
+        <td style="display: flex; justify-content: flex-end;">
+            <button class="challenge-button" id="challenge_button_{{forloop.counter0}}" onclick="createChallenge(`{{forloop.counter0}}`)">Challenge</button>
+        </td>
+        </tr>
+        {% endfor %}
+        </table>
+    </div>
+    </td>
+    </table>
+    </div>
+
+    <script>
+        function acceptChallenge(index){
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("accept_button_" + index).innerHTML = this.responseText;
+
+                    location.reload();
+                }
+            };
+            xmlhttp.open("GET", "/acceptChallenge/" + index + "/", true);
+            xmlhttp.send();
+        }
+
+        function createChallenge(index){
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("challenge_button_" + index).innerHTML = this.responseText;
+
+                    location.reload();
+                }
+            };
+            xmlhttp.open("GET", "/createChallenge/" + index + "/", true);
+            xmlhttp.send();
+        }
+
+        function randomChallenge(){
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("random_challenge").innerHTML = this.responseText;
+                    
+                    location.href = "/Play/";
+                }
+            };
+            xmlhttp.open("GET", "/randomChallenge/", true);
+            xmlhttp.send();
+        }
+
+        function endWait() {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("random_challenge").innerHTML = this.responseText;
+
+                document.getElementById("random_challenge").style.display = "inline-block";
+                document.getElementById("end_wait").style.display = "none";
+
+                location.reload();
+            }
+        };
+        xmlhttp.open("GET", "/endWait/", true);
+        xmlhttp.send();
+    }
+    </script>
+
+    
+</body>
+</html>

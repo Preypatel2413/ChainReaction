@@ -1,0 +1,198 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chain Reaction | Game</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <style>
+        .button {
+            padding: 0;
+            margin: 0;
+        }
+
+        .button img {
+            padding: 0;
+            margin: 0;
+            width: 50px;
+            height: 50px;
+            
+        }
+
+        .button_ {
+            padding: 10px 10px;
+            margin: 3px 3px;
+        }
+
+        h1{
+            font-family: 'Papyrus', sans-serif;
+            font-weight: bold;
+            font-size: 42px;
+            height: 70px;
+            width: 500px;
+            color: transparent;
+            background-clip: text;
+            -webkit-background-clip: text;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+    
+</head>
+<body>
+    <div class="pc">
+    <h1>Chain Reaction</h1>
+    </div>
+    <br>
+    <div>
+    {% if move|divisibleby:2 %}
+    <table class="tab2" align="center">
+    {% else %}
+    <table class="tab1" align="center">
+    {% endif %}    
+        {% for row in Position %}    
+        <tr>
+            {% for col in row %}
+            {% if move|divisibleby:2 %}
+            <td class="tab2">
+            {% else %}
+            <td class="tab1">
+            {% endif %}
+                {% if move|divisibleby:2 %}    
+                <button class="button button1" type="button" id="button_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" onclick="updatePosition(`{{forloop.parentloop.counter0}}`,`{{forloop.counter0}}`, `{{col}}`,`{{move}}`)">
+                    <!-- {{ col }}     -->
+                    {% if col == 3 %}
+                        <img src="https://user-images.githubusercontent.com/76490445/252639949-7d7af8d4-bd4d-421f-b5dd-f4830bb8a417.png">
+                    {% elif col == 2 %}
+                        <img src="https://user-images.githubusercontent.com/76490445/252639946-49b5654d-c537-433e-9e5e-365ce3f87f6b.png">
+                    {% elif col == 1 %}
+                        <img src="https://user-images.githubusercontent.com/76490445/252639944-fa6bd42b-25ec-4d97-94e1-59a060fc2029.png">
+                    {% elif col == -3 %}
+                        <img src="https://user-images.githubusercontent.com/76490445/252639938-822c3b44-cfd8-4918-a469-33d583c1de6b.png">
+                    {% elif col == -2 %}
+                        <img src="https://user-images.githubusercontent.com/76490445/252639933-3e90681e-5d22-46da-88bf-cfa42048b59e.png">
+                    {% elif col == -1 %}
+                        <img src="https://user-images.githubusercontent.com/76490445/252639932-1a7eb522-e407-4e24-b3e1-1a21e2409adc.png">
+                    {% else %}
+                        <img src="https://user-images.githubusercontent.com/76490445/252639924-40a136c7-038d-41df-9147-07d7b12e9c74.png">
+                    {% endif %}
+                </button>
+                {% else %}
+                <button class="button button2" type="button" id="button_{{ forloop.counter0 }}_{{ forloop.parentloop.counter0 }}" onclick="updatePosition(`{{forloop.parentloop.counter0}}`,`{{forloop.counter0}}`,`{{col}}`,`{{move}}`)">
+                    <!-- {{ col }}     -->
+                    {% if col == 3 %}
+                        <img src="https://user-images.githubusercontent.com/76490445/252639949-7d7af8d4-bd4d-421f-b5dd-f4830bb8a417.png">
+                    {% elif col == 2 %}
+                        <img src="https://user-images.githubusercontent.com/76490445/252639946-49b5654d-c537-433e-9e5e-365ce3f87f6b.png">
+                    {% elif col == 1 %}
+                        <img src="https://user-images.githubusercontent.com/76490445/252639944-fa6bd42b-25ec-4d97-94e1-59a060fc2029.png">
+                    {% elif col == -3 %}
+                        <img src="https://user-images.githubusercontent.com/76490445/252639938-822c3b44-cfd8-4918-a469-33d583c1de6b.png">
+                    {% elif col == -2 %}
+                        <img src="https://user-images.githubusercontent.com/76490445/252639933-3e90681e-5d22-46da-88bf-cfa42048b59e.png">
+                    {% elif col == -1 %}
+                        <img src="https://user-images.githubusercontent.com/76490445/252639932-1a7eb522-e407-4e24-b3e1-1a21e2409adc.png">
+                    {% else %}
+                        <img src="https://user-images.githubusercontent.com/76490445/252639924-40a136c7-038d-41df-9147-07d7b12e9c74.png">
+                    {% endif %}
+                    <!-- <img src="{% static 'images/B_1.png' %}" style="width:25px;height:25px;"> -->
+                </button>
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+
+    <!-- <div>
+    {% if win == 1 or win == 2 %}
+    <table align="center">
+        {% if win == 1%} 
+        <tr>
+            <h3>Player 1 has Won!!!</h3>
+        </tr>
+        {% else %}
+        <tr>
+            <h3>Player 2 has Won!!!</h3>
+        </tr>
+        {% endif %}
+        <tr><td align="center">
+            <button type="button" class="button button1 button_" onclick="clearData_M()">Play Again</button>
+        </td>
+        <td align="center" onclick="">
+            <button type="button" class="button button2 button_" onclick="clearData_H()">Go to Home</button>
+        </td></tr>
+    </table>
+    {% endif %}
+    </div> -->
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
+    <div id="win-data" data-win="{{ win }}"></div>
+    <script>
+        var win = document.getElementById("win-data").dataset.win;
+        if(win == 1){
+            swal.fire({title: 'Player 1 has won the match!!!', confirmButtonText: 'Play Again', showCancelButton: true, cancelButtonText: 'Go To Home', })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({title: "New Game Begins"});
+                    clearData_M();
+                } else {
+                    Swal.fire({title: "Taking to Home page"});
+                    clearData_H();
+                }
+            });
+        }else if(win == 2){
+            swal.fire({title: 'Player 2 has won the match!!!', confirmButtonText: 'Play Again', showCancelButton: true, cancelButtonText: 'Go To Home', })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({title: "New Game Begins"});
+                    clearData_M();
+                } else {
+                    Swal.fire({title: "Taking to Home page"});
+                    clearData_H();
+                }
+            });
+        }
+    </script>
+    
+    <script>
+        function updatePosition(row, col, p, mv) {
+            console.log(p,mv)
+            if(p>0 && mv%2 === 1){
+                Swal.fire({title: 'Invalid Move!', text: 'This box is already filled with opponents atoms.',confirmButtonText: 'OK', timer: 2500})
+            }else if(p<0 && mv%2 === 0){
+                Swal.fire({title: 'Invalid Move!', text: 'This box is already filled with opponents atoms.',confirmButtonText: 'OK', timer: 2500})
+            }else{
+
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("button_" + col + "_" + row).innerHTML = this.responseText;
+
+                        location.reload();
+                    }
+                };
+                xmlhttp.open("GET", "/update_position/" + row + "/" + col, true);
+                xmlhttp.send();
+            }
+
+        }
+
+        function clearData_M() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/clear-data/");
+            xhr.send();
+            window.location.href = "/Main/";
+        }
+        function clearData_H() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/clear-data/");
+            xhr.send();
+            window.location.href = "/Home/";
+        }
+
+    </script>
+
+</body>
+</html>
+<!-- '012345678'|make_list -->
