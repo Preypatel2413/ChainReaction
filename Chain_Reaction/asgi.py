@@ -19,8 +19,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Chain_Reaction.settings')
 # application = get_asgi_application()
 
 ws_pattern = [
-    path('ws/Game/<room_code>', GameRoom.as_asgi()),
-    path('ws/random_challenge/', RandomChallengeConsumer.as_asgi()),
+    re_path(r'^/ws/Game/<room_code>/$', GameRoom.as_asgi()),
+    re_path(r'^/ws/random_challenge/$', RandomChallengeConsumer.as_asgi()),
 ]
 
 application= ProtocolTypeRouter(
