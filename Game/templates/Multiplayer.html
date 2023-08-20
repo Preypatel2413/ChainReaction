@@ -41,7 +41,7 @@
 	h3{
 	         color: #000000; text-align: center; font-family: 'Verdana';
 	  }
-	<style>
+	</style>
     <style>
         .button {
             align-self: center;
@@ -442,7 +442,7 @@
     </script>
 
     <script>
-        var socket = new WebSocket('wss://' + window.location.host + '/ws/Game/' + '{{room_code}}');
+        var socket = new WebSocket('ws://' + window.location.host + '/ws/Game/' + '{{room_code}}');
     
         socket.onmessage = function (e) {
             var data = JSON.parse(e.data)

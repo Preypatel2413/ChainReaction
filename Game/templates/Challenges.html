@@ -247,7 +247,7 @@
     <!-- challenges.html -->
 
     <script>
-        var socket = new WebSocket('wss://' + window.location.host + '/ws/random_challenge/');
+        var socket = new WebSocket('ws://' + window.location.host + '/ws/random_challenge/');
     
         socket.onmessage = function (e) {
             var data = JSON.parse(e.data)
